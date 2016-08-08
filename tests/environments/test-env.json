@@ -1,0 +1,4 @@
+{
+    "distgit_server": "pkgs.example.com",
+    "koji_profile": "test"
+}

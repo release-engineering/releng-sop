@@ -1,0 +1,17 @@
+{
+    "distgit": {
+        "branch": "test-branch"
+    },
+    "koji": {
+        "tag_bootstrap": "test-bootstrap",
+        "tag_build": "test-build",
+        "tag_buildrequires": "test-buildrequires",
+        "tag_candidate": "test-candidate",
+        "tag_compose": "test-compose",
+        "tag_override": "test-override",
+        "tag_pending": "test-pending",
+        "tag_release": "test",
+        "tag_temp_override": "test-temp-override",
+        "target": "test-candidate"
+    }
+}
