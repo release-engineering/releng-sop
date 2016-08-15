@@ -12,6 +12,9 @@ setup(
     author="Daniel Mach",
     author_email="dmach@redhat.com",
     license="MIT",
+    install_requires=[
+        "pyxdg"
+    ],
     packages=find_packages(),
     include_package_data=True,
     scripts=[
