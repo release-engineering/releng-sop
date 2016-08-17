@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-
+"""Common code and utilities."""
 
 import os
 import json
@@ -14,6 +14,7 @@ __all__ = (
 
 
 class ConfigBase(object):
+    """Base class for configurations."""
 
     # override in inherited classes
     config_subdir = None
@@ -66,9 +67,13 @@ class ConfigBase(object):
 
 
 class Environment(ConfigBase):
+    """Environment configuration."""
+
     config_subdir = "environments"
     default_config = "default"
 
 
 class Release(ConfigBase):
+    """Release configuration."""
+
     config_subdir = "releases"

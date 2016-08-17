@@ -1,19 +1,35 @@
 # -*- coding: utf-8 -*-
+"""Block packages in a release.
 
+Constructs the koji command
+
+    koji --profile=KOJI_PROFILE block-pkg RELEASE_TAG PACKAGES...
+
+KOJI_PROFILE is obtained from the environment settings.
+
+RELEASE_TAG is the "tag_release" key from the release configuration
+    corresponding to the release id.
+"""
 
 from __future__ import print_function
 from __future__ import unicode_literals
 
 import argparse
-import subprocess
 
-from .common import Environment, Release
-
+from .common import Environment
 from .kojibase import KojiBase
 
 
 class KojiBlockPackageInRelease(KojiBase):
+    """Block packages in a release."""
+
     def print_details(self, commit=False):
+        """Print details of command execution.
+
+        :param commit: Flag to indicate if the command will be actually executed.
+                       Line indicating "test mode" is printed, if this is False.
+        :type commit:  boolean; default False
+        """
         print("Blocking packages in a release")
         print(" * env name:                %s" % self.env.name)
         print(" * env config:              %s" % self.env.config_path)
@@ -28,6 +44,14 @@ class KojiBlockPackageInRelease(KojiBase):
             print("*** TEST MODE ***")
 
     def get_cmd(self, commit=False):
+        """Construct the koji command.
+
+        :param commit: Flag to indicate if the command will be actually executed.
+                       "echo" is prepended to the command, if this is False.
+        :type commit:  boolean; default False
+        :returns:      Koji command.
+        :rtype:        list of strings
+        """
         cmd = []
         cmd.append("koji")
         cmd.append("--profile=%s" % self.env["koji_profile"])
@@ -40,6 +64,10 @@ class KojiBlockPackageInRelease(KojiBase):
 
 
 def get_parser():
+    """Construct argument parser.
+
+    :returns: ArgumentParser object with arguments set up.
+    """
     parser = argparse.ArgumentParser(
         description="Block packages in a koji tag that maps to given release.",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
@@ -69,6 +97,7 @@ def get_parser():
 
 
 def main():
+    """Main function."""
     parser = get_parser()
     args = parser.parse_args()
     env = Environment(args.env)
