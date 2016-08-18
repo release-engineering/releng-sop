@@ -1,3 +1,6 @@
+[![Build Status](https://travis-ci.org/release-engineering/releng-sop.svg?branch=master)](https://travis-ci.org/release-engineering/releng-sop)
+[![Documentation Status](https://readthedocs.org/projects/releng-sop/badge/?version=latest)](http://releng-sop.readthedocs.io/en/latest/?badge=latest)
+
 Goal
 ----
 Implement Release Engineering SOPs (Standard Operation Procedures)
