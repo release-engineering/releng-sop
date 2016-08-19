@@ -1,6 +1,8 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-
+"""
+Tests for configuration data.
+"""
 
 import unittest
 
@@ -10,7 +12,7 @@ import sys
 DIR = os.path.dirname(__file__)
 sys.path.insert(0, os.path.join(DIR, ".."))
 
-from releng_sop.common import Environment, Release  # noqa
+from releng_sop.common import Environment, Release  # noqa: E402
 
 
 RELEASES_DIR = os.path.join(DIR, "releases")
@@ -18,6 +20,8 @@ ENVIRONMENTS_DIR = os.path.join(DIR, "environments")
 
 
 class TestReleaseData(unittest.TestCase):
+    """Test release configuration data found in RELEASES_DIR."""
+
     longMessage = True
 
     def _get_releases(self):
@@ -29,6 +33,7 @@ class TestReleaseData(unittest.TestCase):
         return result
 
     def test_releases(self):
+        """Read all json files from RELEASES_DIR, and check data structure."""
         releases = self._get_releases()
         for release_id in releases:
             release = Release(release_id, config_dirs=[RELEASES_DIR])
@@ -56,6 +61,8 @@ class TestReleaseData(unittest.TestCase):
 
 
 class TestEnvironmentData(unittest.TestCase):
+    """Test environment configuration data found in ENVIRONMENTS_DIR."""
+
     longMessage = True
 
     def _get_environments(self):
@@ -67,6 +74,7 @@ class TestEnvironmentData(unittest.TestCase):
         return result
 
     def test_environments(self):
+        """Read all json files from ENVIRONMENTS_DIR, and check data structure."""
         environments = self._get_environments()
         for env_id in environments:
             env = Environment(env_id, config_dirs=[ENVIRONMENTS_DIR])

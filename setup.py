@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-
+"""Packaging logic for releng-sop."""
 
 from setuptools import setup, find_packages
 
@@ -7,7 +7,7 @@ from setuptools import setup, find_packages
 setup(
     name="releng-sop",
     version="0.1",
-    description="Release Enginering Standard Operating Procedures",
+    description="Release Engineering Standard Operating Procedures",
     url="https://github.com/release-engineering/releng-sop.git",
     author="Daniel Mach",
     author_email="dmach@redhat.com",
