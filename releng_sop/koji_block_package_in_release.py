@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+
 """Block packages in a release.
 
 Constructs the koji command
@@ -38,25 +39,26 @@ class KojiBlockPackageInRelease(KojiBase):
         super(KojiBlockPackageInRelease, self).__init__(env, release)
         self.packages = sorted(packages)
 
-    def print_details(self, commit=False):
+    def details(self, commit=False):
         """Print details of command execution.
 
         :param commit: Flag to indicate if the command will be actually executed.
                        Line indicating "test mode" is printed, if this is False.
         :type commit:  boolean; default False
         """
-        print("Blocking packages in a release")
-        print(" * env name:                %s" % self.env.name)
-        print(" * env config:              %s" % self.env.config_path)
-        print(" * release source           %s" % self.release.config_path)
-        print(" * koji profile:            %s" % self.env["koji_profile"])
-        print(" * release_id:              %s" % self.release_id)
-        print(" * tag:                     %s" % self.release["koji"]["tag_release"])
-        print(" * packages:")
+        details = "Blocking packages in a release\n"
+        details += " * env name:                %s\n" % self.env.name
+        details += " * env config:              %s\n" % self.env.config_path
+        details += " * release source           %s\n" % self.release.config_path
+        details += " * koji profile:            %s\n" % self.env["koji_profile"]
+        details += " * release_id:              %s\n" % self.release_id
+        details += " * tag:                     %s\n" % self.release["koji"]["tag_release"]
+        details += " * packages:\n"
         for i in self.packages:
-            print("     %s" % i)
+            details += "     %s\n" % i
         if not commit:
-            print("*** TEST MODE ***")
+            details += "*** TEST MODE ***"
+        return details
 
     def get_cmd(self, commit=False):
         """Construct the koji command.
