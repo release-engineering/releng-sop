@@ -16,7 +16,7 @@ from __future__ import unicode_literals
 
 import argparse
 
-from .common import Environment
+from .common import Environment, Release
 from .kojibase import KojiBase
 
 
@@ -114,7 +114,8 @@ def main():
     parser = get_parser()
     args = parser.parse_args()
     env = Environment(args.env)
-    clone = KojiCreatePackageInRelease(env, args.release_id, args.packages, args.owner)
+    rel = Release(args.release_id)
+    clone = KojiCreatePackageInRelease(env, rel, args.packages, args.owner)
     clone.run(commit=args.commit)
 
 

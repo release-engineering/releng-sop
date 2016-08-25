@@ -38,10 +38,10 @@ class KojiCloneTagForReleaseMilestone(object):
     :type milestone: str
     """
 
-    def __init__(self, env, release_id, milestone):  # noqa: D102
+    def __init__(self, env, rel, milestone):  # noqa: D102
         self.env = env
-        self.release_id = release_id
-        self.release = Release(self.release_id)
+        self.release_id = rel.name
+        self.release = rel
         self.milestone = milestone
         self.compose_tag = self.release["koji"]["tag_compose"]
         self.milestone_tag = self._get_milestone_tag(milestone)
@@ -129,6 +129,7 @@ def get_parser():
     )
     parser.add_argument(
         "--env",
+        default="default",
         help="Select environment in which the program will make changes.",
     )
     return parser
@@ -139,7 +140,8 @@ def main():
     parser = get_parser()
     args = parser.parse_args()
     env = Environment(args.env)
-    clone = KojiCloneTagForReleaseMilestone(env, args.release_id, args.milestone)
+    rel = Release(args.release_id)
+    clone = KojiCloneTagForReleaseMilestone(env, rel, args.milestone)
     clone.run(commit=args.commit)
 
 
