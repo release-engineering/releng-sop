@@ -19,29 +19,26 @@ milestone_tag is main release tag + name of milestone + milestone major version 
 from __future__ import print_function
 
 import argparse
-import subprocess
 
 from productmd.composeinfo import verify_label as verify_milestone
 
 from .common import Environment, Release
+from .kojibase import KojiBase
 
 
-class KojiCloneTagForReleaseMilestone(object):
+class KojiCloneTagForReleaseMilestone(KojiBase):
     """
     Clone tag for release milestone.
 
-    :param env: name of the environment to be used to execute the commands.
-    :type  env: str
-    :param release_id: PDC release ID, for example 'fedora-24', 'fedora-24-updates'.
-    :type release_id: str
     :param milestone: Milestone name and version, for example: Beta-1.0
     :type milestone: str
     """
 
-    def __init__(self, env, rel, milestone):  # noqa: D102
-        self.env = env
-        self.release_id = rel.name
-        self.release = rel
+    def __init__(self, env, rel, milestone):
+        """
+        Adding milestone_tag and compose_tag.
+        """
+        super(KojiCloneTagForReleaseMilestone, self).__init__(env, rel)
         self.milestone = milestone
         self.compose_tag = self.release["koji"]["tag_compose"]
         self.milestone_tag = self._get_milestone_tag(milestone)
@@ -95,13 +92,6 @@ class KojiCloneTagForReleaseMilestone(object):
         if not commit:
             cmd.append('--test')
         return cmd
-
-    def run(self, commit=False):
-        """Print command details, get command and run it."""
-        self.print_details(commit=commit)
-        cmd = self.get_cmd(commit=commit)
-        print(cmd)
-        subprocess.check_output(cmd)
 
 
 def get_parser():

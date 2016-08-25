@@ -23,9 +23,12 @@ from .kojibase import KojiBase
 class KojiCreatePackageInRelease(KojiBase):
     """Create packages in a release."""
 
-    def __init__(self, env, release_id, packages, owner):
-        """Adding owner as an aditional member."""
-        super(KojiCreatePackageInRelease, self).__init__(env, release_id, packages)
+    def __init__(self, env, rel, packages, owner):
+        """
+        Adding packages for create and owner as an aditional member.
+        """
+        super(KojiCreatePackageInRelease, self).__init__(env, rel)
+        self.packages = sorted(packages)
         self.owner = owner
 
     def print_details(self, commit=False):

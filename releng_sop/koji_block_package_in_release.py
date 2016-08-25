@@ -23,6 +23,11 @@ from .kojibase import KojiBase
 class KojiBlockPackageInRelease(KojiBase):
     """Block packages in a release."""
 
+    def __init__(self, env, rel, packages):
+        """Adding packages for block."""
+        super(KojiBlockPackageInRelease, self).__init__(env, rel)
+        self.packages = sorted(packages)
+
     def print_details(self, commit=False):
         """Print details of command execution.
 
