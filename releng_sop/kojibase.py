@@ -7,16 +7,16 @@ class KojiBase(object):
     """Base class for koji commands.
 
     :param env:        Environment object to be used to execute the commands.
-    :type env:         str
+    :type env:         Environment
 
-    :param rel: Release object.
-    :type rel:  str
+    :param release: Release object.
+    :type release:  Release
     """
 
-    def __init__(self, env, rel):  # noqa: D102
+    def __init__(self, env, release):  # noqa: D102
         self.env = env
-        self.release_id = rel.name
-        self.release = rel
+        self.release_id = release.name
+        self.release = release
 
     def run(self, commit=False):
         """Print command details, get command and run it."""

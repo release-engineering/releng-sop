@@ -21,11 +21,21 @@ from .kojibase import KojiBase
 
 
 class KojiBlockPackageInRelease(KojiBase):
-    """Block packages in a release."""
+    """Block packages in a release.
 
-    def __init__(self, env, rel, packages):
-        """Adding packages for block."""
-        super(KojiBlockPackageInRelease, self).__init__(env, rel)
+    :param env:        Environment object to be used to execute the commands.
+    :type env:         Environment
+
+    :param release: Release object.
+    :type release:  Release
+
+    :param packages: name of package to be created in a release
+    :type packages:  list of str
+    """
+
+    def __init__(self, env, release, packages):
+        """Adding packages to block."""
+        super(KojiBlockPackageInRelease, self).__init__(env, release)
         self.packages = sorted(packages)
 
     def print_details(self, commit=False):
@@ -106,8 +116,8 @@ def main():
     parser = get_parser()
     args = parser.parse_args()
     env = Environment(args.env)
-    rel = Release(args.release_id)
-    clone = KojiBlockPackageInRelease(env, rel, args.packages)
+    release = Release(args.release_id)
+    clone = KojiBlockPackageInRelease(env, release, args.packages)
     clone.run(commit=args.commit)
 
 

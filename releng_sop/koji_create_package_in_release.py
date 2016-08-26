@@ -21,13 +21,25 @@ from .kojibase import KojiBase
 
 
 class KojiCreatePackageInRelease(KojiBase):
-    """Create packages in a release."""
+    """
+    Create packages in a release.
 
-    def __init__(self, env, rel, packages, owner):
-        """
-        Adding packages for create and owner as an aditional member.
-        """
-        super(KojiCreatePackageInRelease, self).__init__(env, rel)
+    :param env:        Environment object to be used to execute the commands.
+    :type env:         Environment
+
+    :param release: Release object.
+    :type release:  Release
+
+    :param packages: name of package to be created in a release
+    :type packages:  list of str
+
+    :param owner:   package owner
+    :type owner:    str
+    """
+
+    def __init__(self, env, release, packages, owner):
+        """Adding packages for create and owner as an aditional member."""
+        super(KojiCreatePackageInRelease, self).__init__(env, release)
         self.packages = sorted(packages)
         self.owner = owner
 
@@ -117,8 +129,8 @@ def main():
     parser = get_parser()
     args = parser.parse_args()
     env = Environment(args.env)
-    rel = Release(args.release_id)
-    clone = KojiCreatePackageInRelease(env, rel, args.packages, args.owner)
+    release = Release(args.release_id)
+    clone = KojiCreatePackageInRelease(env, release, args.packages, args.owner)
     clone.run(commit=args.commit)
 
 
