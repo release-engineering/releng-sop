@@ -19,29 +19,32 @@ milestone_tag is main release tag + name of milestone + milestone major version 
 from __future__ import print_function
 
 import argparse
-import subprocess
 
 from productmd.composeinfo import verify_label as verify_milestone
 
 from .common import Environment, Release
+from .kojibase import KojiBase
 
 
-class KojiCloneTagForReleaseMilestone(object):
+class KojiCloneTagForReleaseMilestone(KojiBase):
     """
     Clone tag for release milestone.
 
-    :param env: name of the environment to be used to execute the commands.
-    :type  env: str
-    :param release_id: PDC release ID, for example 'fedora-24', 'fedora-24-updates'.
-    :type release_id: str
+    :param env:        Environment object to be used to execute the commands.
+    :type env:         Environment
+
+    :param release: Release object.
+    :type release:  Release
+
     :param milestone: Milestone name and version, for example: Beta-1.0
     :type milestone: str
     """
 
-    def __init__(self, env, release_id, milestone):  # noqa: D102
-        self.env = env
-        self.release_id = release_id
-        self.release = Release(self.release_id)
+    def __init__(self, env, release, milestone):
+        """
+        Adding milestone_tag and compose_tag.
+        """
+        super(KojiCloneTagForReleaseMilestone, self).__init__(env, release)
         self.milestone = milestone
         self.compose_tag = self.release["koji"]["tag_compose"]
         self.milestone_tag = self._get_milestone_tag(milestone)
@@ -96,13 +99,6 @@ class KojiCloneTagForReleaseMilestone(object):
             cmd.append('--test')
         return cmd
 
-    def run(self, commit=False):
-        """Print command details, get command and run it."""
-        self.print_details(commit=commit)
-        cmd = self.get_cmd(commit=commit)
-        print(cmd)
-        subprocess.check_output(cmd)
-
 
 def get_parser():
     """
@@ -129,6 +125,7 @@ def get_parser():
     )
     parser.add_argument(
         "--env",
+        default="default",
         help="Select environment in which the program will make changes.",
     )
     return parser
@@ -139,7 +136,8 @@ def main():
     parser = get_parser()
     args = parser.parse_args()
     env = Environment(args.env)
-    clone = KojiCloneTagForReleaseMilestone(env, args.release_id, args.milestone)
+    release = Release(args.release_id)
+    clone = KojiCloneTagForReleaseMilestone(env, release, args.milestone)
     clone.run(commit=args.commit)
 
 
