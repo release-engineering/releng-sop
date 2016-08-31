@@ -25,4 +25,5 @@ setup(
         "bin/koji-clone-tag-for-release-milestone",
     ],
     test_suite="tests",
+    tests_require=["mock", "six"]
 )

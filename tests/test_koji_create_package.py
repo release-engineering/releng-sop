@@ -2,131 +2,131 @@
 # -*- coding: utf-8 -*-
 
 
-"""Tests of CreatePackageInRelease script.
+"""Tests of KojiCreatePackageInRelease script.
 """
 
 
 import unittest
 import os
 import sys
+from mock import Mock
 
 DIR = os.path.dirname(__file__)
 sys.path.insert(0, os.path.join(DIR, ".."))
 
 from releng_sop.common import Environment, Release  # noqa
-from releng_sop.koji_create_package_in_release import get_parser  # noqa
-from releng_sop.koji_create_package_in_release import KojiCreatePackageInRelease  # noqa
-
-l = [["envHelp", "--env ENV"], ["commitHelp", "--commit "], ["helpReleaseId", "RELEASE_ID  "], ["helpPackage", "PACKAGE  "]]
-
-RELEASES_DIR = os.path.join(DIR, "releases")
-ENVIRONMENTS_DIR = os.path.join(DIR, "environments")
+from releng_sop.koji_create_package_in_release import get_parser, KojiCreatePackageInRelease  # noqa
+from tests.common import ParserTestBase  # noqa
 
 
 class TestKojiCreatePackage(unittest.TestCase):
     """Tests of methods from KojiCreatePackageInRelease class."""
 
-    def setUp(self):
-        """Set up variables before tests."""
-        parser = get_parser()
-        arguments = ['--owner=test', 'test-release', 'bash']
-        args = parser.parse_args(arguments)
-        env = Environment(args.env)
-        self.clone = KojiCreatePackageInRelease(env, args.release_id, args.packages, args.owner)
+    env_spec = {
+        'name': 'default',
+        'config_path': 'some/file.json',
+        'config_data': {
+            'koji_profile': 'test'
+        },
+        '__getitem__': lambda self, item: self.config_data[item]
+    }
 
-    def test_details(self):
-        """Test return data of details method."""
-        test = self.clone.details(commit=False)
-        expectation = """Creating packages in a release
- * env name:                default
- * env config:              /home/jcupova/.config/releng-sop/environments/test-env.json
- * release source           /home/jcupova/.config/releng-sop/releases/test-release.json
- * koji profile:            test
- * release_id:              test-release
- * owner:                   test
- * tag:                     test
+    release_spec = {
+        'name': 'test-release',
+        'config_path': 'some.json',
+        'config_data': {
+            'koji': {
+                'tag_release': 'test'
+            },
+        },
+        '__getitem__': lambda self, item: self.config_data[item]
+    }
+
+    packages = ['bash']
+    owner = 'test'
+
+    # Expected details text
+    details = """Creating packages in a release
+ * env name:                {env[name]}
+ * env config:              {env[config_path]}
+ * release source           {release[config_path]}
+ * koji profile:            {env[config_data][koji_profile]}
+ * release_id:              {release[name]}
+ * owner:                   {owner}
+ * tag:                     {release[config_data][koji][tag_release]}
  * packages:
-     bash
-*** TEST MODE ***"""
+     {packages}
+""".format(env=env_spec, owner=owner, release=release_spec, packages="\n     ".join(packages))
 
-        self.assertEqual(test, expectation, 'Method print_details has any mistakes.')
+    # Expected command
+    cmd = "koji --profile={profile} add-pkg --owner={owner} {release_tag} {packages}".format(
+        profile=env_spec['config_data']['koji_profile'],
+        owner=owner,
+        release_tag=release_spec['config_data']['koji']['tag_release'],
+        packages=" ".join(packages)).split()
 
-    def test_get_cmd(self):
-        """Test return data of get_cmd method."""
-        commit = False
-        testCmd = self.clone.get_cmd(commit=False)
-
-        expectation = []
-        expectation.append("koji")
-        expectation.append("--profile=test")
-        expectation.append("add-pkg")
-        expectation.append('--owner=test')
-        expectation.append('test')
-        expectation.append('bash')
-        if not commit:
-            expectation = ["echo"] + expectation
-
-        self.assertEqual(testCmd, expectation, 'Method get_cmd has any mistakes.')
-
-
-class TestKojiCreatePackageGetParser(unittest.TestCase):
-    """Tests of arguments from get_parser function."""
-
-    longMessage = True
-
-    def setUp(self):
+    @classmethod
+    def setUpClass(cls):
         """Set up variables before tests."""
-        parser = get_parser()
-        with open('test.txt', 'w') as f:
-            parser.print_help(f)
+        env = Mock(spec_set=list(cls.env_spec.keys()))
+        env.configure_mock(**cls.env_spec)
 
-    def tearDown(self):
-        """Clean space after tests."""
-        os.remove('test.txt')
+        release = Mock(spec_set=list(cls.release_spec.keys()))
+        release.configure_mock(**cls.release_spec)
 
-    def test_commit_default(self):
-        """Test whether --commit have default value False."""
-        parser = get_parser()
-        arguments = ['--owner=test', 'fedora-24', 'bash']
-        args = parser.parse_args(arguments)
-        self.assertTrue(hasattr(args, "commit"), 'commit argument is missing')
-        self.assertFalse(args.commit, 'Default value for commit should be False')
+        cls.clone = KojiCreatePackageInRelease(env, release, cls.packages, cls.owner)
 
-    def test_commit_set(self):
-        """Test whether --commit is set."""
-        parser = get_parser()
-        arguments = ['--owner=test', 'fedora-24', 'bash', '--commit']
-        args = parser.parse_args(arguments)
-        self.assertTrue(args.commit, 'Value for commit should be True')
+    def test_details_no_commit(self):
+        """Get details, while not commiting."""
+        actual = self.clone.details()
+        expected = self.details + "*** TEST MODE ***"
+        self.assertEqual(actual, expected, self.test_details_no_commit.__doc__)
 
-    def test_env_default(self):
-        """Test whether --env have default value default."""
-        parser = get_parser()
-        arguments = ['--owner=test', 'fedora-24', 'bash']
-        args = parser.parse_args(arguments)
-        self.assertEqual("default", args.env, 'Default value for env should be default')
+    def test_details_with_commit(self):
+        """Get details when commiting."""
+        actual = self.clone.details(commit=True)
+        expected = self.details
+        self.assertEqual(actual, expected, self.test_details_with_commit.__doc__)
 
-    def test_env_set(self):
-        """Test whether --commit is set."""
-        parser = get_parser()
-        arguments = ['--owner=test', 'fedora-24', 'bash', "--env", "some_env"]
-        args = parser.parse_args(arguments)
-        self.assertTrue(hasattr(args, "env"), 'Env argument is set')
+    def test_get_cmd_no_commit(self):
+        """Get command, while not commiting."""
+        actual = self.clone.get_cmd()
+        expected = ["echo"] + self.cmd
+        self.assertEqual(actual, expected, self.test_get_cmd_no_commit.__doc__)
+
+    def test_get_cmd_with_commit(self):
+        """Get command when commiting."""
+        actual = self.clone.get_cmd(commit=True)
+        expected = self.cmd
+        self.assertEqual(actual, expected, self.test_get_cmd_with_commit.__doc__)
 
 
-def test_generator_help_not_empty(a):
-    """Test generator whether some help is empty."""
-    def test(self):
-        with open('test.txt', 'r') as f:
-            for line in f:
-                if a in line:
-                    helpAtr = line.replace(a, '').strip()
-        self.assertNotEqual(len(helpAtr), 0, 'Help in %s argument is empty.' % a)
-    return test
+class TestKojiCreatePackageParser(ParserTestBase, unittest.TestCase):
+    """Set Arguments and Parser for Test generator."""
+
+    ARGUMENTS = {
+        'envHelp': {
+            'arg': '--env ENV',
+            'env_default': ['--owner=test', 'fedora-24', 'bash'],
+            'env_set': ['--owner=test', 'fedora-24', 'bash', "--env", "some_env"],
+        },
+        'commitHelp': {
+            'arg': '--commit',
+            'commit_default': ['--owner=test', 'fedora-24', 'bash'],
+            'commit_set': ['--owner=test', 'fedora-24', 'bash', '--commit'],
+        },
+        'helpReleaseId': {
+            'arg': 'RELEASE_ID',
+        },
+        'helpPackage': {
+            'arg': 'PACKAGE',
+        },
+        'helpOwner': {
+            'arg': '--owner',
+        },
+    }
+
+    PARSER = get_parser()
 
 if __name__ == "__main__":
-    for t in l:
-        test_name = 'test_%s' % t[0]
-        test = test_generator_help_not_empty(t[1])
-        setattr(TestKojiCreatePackageGetParser, test_name, test)
     unittest.main()
