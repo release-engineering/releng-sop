@@ -70,7 +70,6 @@ class Environment(ConfigBase):
     """Environment configuration."""
 
     config_subdir = "environments"
-    default_config = "default"
 
 
 class Release(ConfigBase):
