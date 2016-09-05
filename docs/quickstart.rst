@@ -55,7 +55,7 @@ specified below):
 If ``$XDG_CONFIG_HOME`` is not set or empty, a default equal to ``$HOME/.config``
 is used.
 
-Release data for a release having ``RELEASE-ID=fedora-24``, will be read from
+Release data for a release having ``RELEASE_ID=fedora-24``, will be read from
 ``fedora-24.json`` found in one of the locations mentioned above.
 
 An example for release data can be found in ``tests/releases/test-release.json``.
