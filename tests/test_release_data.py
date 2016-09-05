@@ -93,15 +93,15 @@ class TestConfigDataNotFound(unittest.TestCase):
         """Raise RuntimeError when release data no found."""
         release_id = "no-such-release"
 
-        with self.assertRaises(RuntimeError):
-            Release(release_id, config_dirs=[RELEASES_DIR])
+        self.assertRaises(RuntimeError,
+                          Release, release_id, config_dirs=[RELEASES_DIR])
 
     def test_environment_not_found(self):
         """Raise RuntimeError when environment configuration no found."""
         env_id = "no-such-environment"
 
-        with self.assertRaises(RuntimeError):
-            Environment(env_id, config_dirs=[ENVIRONMENTS_DIR])
+        self.assertRaises(RuntimeError,
+                          Environment, env_id, config_dirs=[ENVIRONMENTS_DIR])
 
 
 if __name__ == "__main__":
