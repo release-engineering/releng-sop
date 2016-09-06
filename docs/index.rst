@@ -16,6 +16,15 @@ Commandline Interface
     cli_koji
 
 
+Contribution guide
+==================
+
+.. toctree::
+    :maxdepth: 2
+
+    contribute
+
+
 Indices and tables
 ==================
 
