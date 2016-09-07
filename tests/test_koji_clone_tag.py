@@ -42,7 +42,7 @@ class TestKojiCloneTag(unittest.TestCase):
     }
 
     milestone = "Beta-1.0"
-    milestone_tag = '{}-{}-set'.format(
+    milestone_tag = '{0}-{1}-set'.format(
         release_spec['config_data']['koji']['tag_release'],
         milestone.lower().split(".")[0])
 
