@@ -15,6 +15,14 @@ Commandline Interface
 
     cli_koji
 
+Code docs
+=========
+
+.. toctree::
+    :maxdepth: 2
+
+    code
+
 
 Indices and tables
 ==================

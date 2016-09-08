@@ -1,5 +1,5 @@
-Koji
-====
+Scripts for Koji
+================
 
 koji-block-package-in-release
 -----------------------------
