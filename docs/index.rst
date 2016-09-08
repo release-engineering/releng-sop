@@ -33,6 +33,15 @@ Code docs
     code
 
 
+Contribution guide
+==================
+
+.. toctree::
+    :maxdepth: 2
+
+    contribute
+
+
 Indices and tables
 ==================
 
