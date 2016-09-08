@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
+
 """Base class for koji commands."""
+
 import subprocess
 
 
@@ -20,7 +22,8 @@ class KojiBase(object):
 
     def run(self, commit=False):
         """Print command details, get command and run it."""
-        self.print_details(commit=commit)
+        details = self.details(commit=commit)
+        print(details)
         cmd = self.get_cmd(commit=commit)
         print(cmd)
         subprocess.check_output(cmd)

@@ -19,7 +19,6 @@ milestone_tag is main release tag + name of milestone + milestone major version 
 from __future__ import print_function
 
 import argparse
-
 from productmd.composeinfo import verify_label as verify_milestone
 
 from .common import Environment, Release
@@ -61,7 +60,7 @@ class KojiCloneTagForReleaseMilestone(KojiBase):
         result = "%s-%s-set" % (self.release["koji"]["tag_release"], self.milestone.lower().split(".")[0])
         return result
 
-    def print_details(self, commit=False):
+    def details(self, commit=False):
         """
         Print details of command execution.
 
@@ -69,14 +68,15 @@ class KojiCloneTagForReleaseMilestone(KojiBase):
                        Line indicating "test mode" is printed, if this is False.
         :type  commit: boolean=False
         """
-        print("Cloning package set for a release milestone")
-        print(" * koji profile:            %s" % self.env["koji_profile"])
-        print(" * release_id:              %s" % self.release_id)
-        print(" * milestone:               %s" % self.milestone)
-        print(" * compose tag (source):    %s" % self.compose_tag)
-        print(" * milestone tag (target):  %s" % self.milestone_tag)
+        details = "Cloning package set for a release milestone\n"
+        details += " * koji profile:            %s\n" % self.env["koji_profile"]
+        details += " * release_id:              %s\n" % self.release_id
+        details += " * milestone:               %s\n" % self.milestone
+        details += " * compose tag (source):    %s\n" % self.compose_tag
+        details += " * milestone tag (target):  %s\n" % self.milestone_tag
         if not commit:
-            print("*** TEST MODE ***")
+            details += "*** TEST MODE ***"
+        return details
 
     def get_cmd(self, commit=False):
         """
