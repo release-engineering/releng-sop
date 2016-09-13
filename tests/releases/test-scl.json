@@ -1,0 +1,22 @@
+{
+    "distgit": {
+        "branch": "test-scl-branch"
+    },
+    "koji": {
+        "tag_bootstrap": "test-scl-bootstrap",
+        "tag_build": "test-scl-build",
+        "tag_buildrequires": "test-scl-buildrequires",
+        "tag_candidate": "test-scl-candidate",
+        "tag_compose": "test-scl-compose",
+        "tag_override": "test-scl-override",
+        "tag_pending": "test-scl-pending",
+        "tag_release": "test",
+        "tag_temp_override": "test-scl-temp-override",
+        "target": "test-scl-candidate"
+    },
+    "scls": [
+        "postgresql92",
+        "python27",
+        "python33"
+    ]
+}
