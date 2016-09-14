@@ -12,6 +12,14 @@ import unittest
 import os
 import sys
 
+
+# HACK: inject empty koji module to silence failing tests.
+# We need to add koji to deps (currently not possible)
+# or create a mock object for testing.
+import imp
+sys.modules["koji"] = imp.new_module("koji")
+
+
 DIR = os.path.dirname(__file__)
 sys.path.insert(0, os.path.join(DIR, ".."))
 
