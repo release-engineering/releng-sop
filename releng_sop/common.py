@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 """Common code and utilities."""
 
+
 import os
 import json
+import logging
 
 import xdg.BaseDirectory
 
@@ -10,6 +12,7 @@ import xdg.BaseDirectory
 __all__ = (
     "Environment",
     "Release",
+    "get_logger",
 )
 
 
@@ -76,3 +79,15 @@ class Release(ConfigBase):
     """Release configuration."""
 
     config_subdir = "releases"
+
+
+def get_logger(obj, log_level):
+    """
+    Return default logger with console output.
+    """
+    logger = logging.Logger(obj.__class__.__name__)
+    handler = logging.StreamHandler()
+    handler.setFormatter(logging.Formatter("%(asctime)s [%(levelname)-8s] %(message)s", datefmt="%Y-%m-%d %H:%M:%S"))
+    handler.setLevel(log_level)
+    logger.addHandler(handler)
+    return logger
