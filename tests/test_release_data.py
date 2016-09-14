@@ -38,6 +38,19 @@ class TestReleaseData(unittest.TestCase):
         for release_id in releases:
             release = Release(release_id, config_dirs=[RELEASES_DIR])
 
+            # check top-level sections
+            expected = [
+                "distgit",
+                "koji",
+                "scls",
+                "signing",
+            ]
+            actual = sorted(release)
+            if "scls" not in actual:
+                # optional, may not be available
+                expected.remove("scls")
+            self.assertEqual(actual, expected, "\n\nrelease_id: %s" % release_id)
+
             # check distgit data
             expected = [
                 "branch",
@@ -58,6 +71,13 @@ class TestReleaseData(unittest.TestCase):
                 "target",
             ]
             self.assertEqual(sorted(release["koji"]), expected, "\n\nrelease_id: %s" % release_id)
+
+            # check signing data
+            expected = [
+                "sigkey_beta",
+                "sigkey_gold",
+            ]
+            self.assertEqual(sorted(release["signing"]), expected, "\n\nrelease_id: %s" % release_id)
 
 
 class TestEnvironmentData(unittest.TestCase):
@@ -82,6 +102,7 @@ class TestEnvironmentData(unittest.TestCase):
             expected = [
                 "distgit_server",
                 "koji_profile",
+                "rpmsign_class",
             ]
             self.assertEqual(sorted(env), expected, "\n\nenv_id: %s" % env_id)
 
