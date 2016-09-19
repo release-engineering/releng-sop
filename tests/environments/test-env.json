@@ -1,4 +1,5 @@
 {
     "distgit_server": "pkgs.example.com",
-    "koji_profile": "test"
+    "koji_profile": "test",
+    "rpmsign_class": "releng_sop.koji_sign.LocalRPMSign"
 }

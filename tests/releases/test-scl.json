@@ -18,5 +18,9 @@
         "postgresql92",
         "python27",
         "python33"
-    ]
+    ],
+    "signing": {
+        "sigkey_beta": "beta-key",
+        "sigkey_gold": "gold-key"
+    }
 }
