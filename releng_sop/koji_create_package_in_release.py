@@ -17,7 +17,7 @@ import sys
 
 import argparse
 
-from .common import Environment, Release, Error
+from .common import Environment, Release, UsageError, Error
 from .kojibase import KojiBase
 
 
@@ -38,10 +38,10 @@ class KojiCreatePackageInRelease(KojiBase):
     :type owner:    str
     """
 
-    def __init__(self, env, release, packages, owner):
+    def __init__(self, env, release, packages, owner, scl=None):
         """Adding packages for create and owner as an aditional member."""
         super(KojiCreatePackageInRelease, self).__init__(env, release)
-        self.packages = sorted(packages)
+        self.packages = self._handle_scl(release, scl, sorted(packages))
         self.owner = owner
 
     def details(self, commit=False):
@@ -70,7 +70,7 @@ class KojiCreatePackageInRelease(KojiBase):
         """Construct the koji command.
 
         :param commit: Flag to indicate if the command will be actually executed.
-                       "echo" is prepended to the command, if this is False.
+                         "echo" is prepended to the command, if this is False.
         :type commit:  boolean; default False
         :returns:      Koji command.
         :rtype:        list of strings
@@ -85,6 +85,46 @@ class KojiCreatePackageInRelease(KojiBase):
         if not commit:
             cmd = ["echo"] + cmd
         return cmd
+
+    @staticmethod
+    def _handle_scl(release, scl, packages):
+        """Check SCL and update package names accordingly.
+
+        :param release: Release object.
+        :type release:  Release
+
+        :param scl:     Software Collection in which packages belong
+        :type scl:    str
+
+        :param packages: name of package to be created in a release
+        :type packages:  list of str
+        """
+        scl_required = 'scls' in release
+
+        def scl_correct():
+            return (scl is not None and (
+                    scl in release['scls'] or scl.lower() == 'none'))
+
+        if scl_required and scl is None:
+            message = "Option --scl required! Valid values as found in '%s' are:\n%s"
+            raise UsageError(message %
+                             (release.config_path,
+                              '\n'.join(release['scls'] + ['none'])))
+
+        if scl_required and not scl_correct():
+            message = "Incorrect SCL selection. Valid values as found in '%s' are:\n%s"
+            raise UsageError(message %
+                             (release.config_path,
+                              '\n'.join(release['scls'] + ['none'])))
+
+        if not scl_required and scl is not None:
+            message = "'%s' has no SCL data, --scl option should not be used."
+            raise UsageError(message % (release.config_path))
+
+        if scl_required and scl.lower() != 'none':
+            packages = ["%s-%s" % (scl, package) for package in packages]
+
+        return packages
 
 
 def get_parser():
@@ -119,6 +159,14 @@ def get_parser():
         help="Package owner",
     )
     parser.add_argument(
+        "--scl",
+        metavar="SCL",
+        default=argparse.SUPPRESS,
+        help="""Software Collection for which packages are created.
+        Required when release has SCL data.
+        'none' can be used when none of the SCLs specifed should be used."""
+    )
+    parser.add_argument(
         "--env",
         default="default",
         help="Select environment in which the program will make changes.",
@@ -137,9 +185,15 @@ def main():
         parser = get_parser()
         args = parser.parse_args()
 
+        # hackish way to suppress 'default' text in help text,
+        # but keep scl in the namespace
+        if not hasattr(args, 'scl'):
+            args.scl = None
+
         env = Environment(args.env)
         release = Release(args.release_id)
-        clone = KojiCreatePackageInRelease(env, release, args.packages, args.owner)
+        clone = KojiCreatePackageInRelease(
+            env, release, args.packages, args.owner, args.scl)
         clone.run(commit=args.commit)
 
     except Error:
