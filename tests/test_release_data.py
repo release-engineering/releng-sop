@@ -102,6 +102,7 @@ class TestEnvironmentData(unittest.TestCase):
             expected = [
                 "distgit_server",
                 "koji_profile",
+                "pulp_server",
                 "rpmsign_class",
             ]
             self.assertEqual(sorted(env), expected, "\n\nenv_id: %s" % env_id)
