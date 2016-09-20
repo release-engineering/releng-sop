@@ -44,7 +44,8 @@ class PulpConfigBase(common.ConfigBase):
 
 class PulpAdminConfig(PulpConfigBase):
     """
-    Pulp admin configs are expected to be found in following locations:
+    Pulp admin configs are expected to be found in following locations.
+
     * ~/.config/pulp/admin/<name>.conf
     * /etc/pulp/admin/<name>.conf
     """

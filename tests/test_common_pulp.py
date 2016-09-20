@@ -25,6 +25,9 @@ mod = mock_module("pulp.client.admin.config")
 
 
 def read_config(paths, *args, **kwargs):
+    """
+    Mock function for pulp.client.admin.config.read_config().
+    """
     cp = six.moves.configparser.RawConfigParser()
     cp.read(paths[0])
     return cp._sections
@@ -60,8 +63,8 @@ class TestPulpAdminConfig(unittest.TestCase):
             context = "\n\nconfig_name: %s" % config_name
             conf = PulpAdminConfig(config_name, config_dirs=[PULP_ADMIN_CONFIG_DIR])
 
-            self.assertIn("server", conf, context)
-            self.assertIn("client", conf, context)
+            self.assertTrue("server" in conf, context)
+            self.assertTrue("client" in conf, context)
 
             self.assertEqual(conf["server"]["host"], "%s.example.com" % config_name, context)
             self.assertEqual(conf["client"]["role"], "admin", context)
