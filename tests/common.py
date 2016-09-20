@@ -1,9 +1,14 @@
+# -*- coding: utf-8 -*-
 
-"""Test generate script.
+
+"""
+Test generate script.
 """
 
 
+import imp
 import os
+import sys
 from six import with_metaclass
 
 
@@ -64,3 +69,37 @@ class ParserTestBase(with_metaclass(HelpNotEmptyMeta), object):
         arguments = self.ARGUMENTS["envHelp"]["env_set"]
         args = self.PARSER.parse_args(arguments)
         self.assertTrue(hasattr(args, "env"), 'Env argument is set')
+
+
+def mock_module(module_name):
+    """
+    Create an empty module.
+
+    Use this to mock modules for testing if there's
+    no resonable way how to install the module via setup.py.
+    """
+    head = module_name.split(".")
+    tail = []
+
+    # lookup for the longest available module path
+    parent_mod = None
+    while head:
+        name = ".".join(head)
+        try:
+            mod = __import__(name)
+            parent_mod = mod
+            break
+        except ImportError:
+            pass
+        tail.insert(0, head.pop())
+
+    # create missing modules
+    while tail:
+        head.append(tail.pop(0))
+        name = ".".join(head)
+        mod = imp.new_module(name)
+        sys.modules[name] = mod
+        if parent_mod:
+            setattr(parent_mod, head[-1], mod)
+        parent_mod = mod
+    return parent_mod
