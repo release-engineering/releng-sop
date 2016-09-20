@@ -35,6 +35,7 @@ class ConfigBase(object):
 
     # override in inherited classes
     config_subdir = None
+    config_suffix = ".json"
 
     def __init__(self, name, config_dirs=None):
         self.name = name
@@ -59,7 +60,7 @@ class ConfigBase(object):
         """
         Find existing config in config dirs.
         """
-        filename = "%s.json" % self.name
+        filename = "%s%s" % (self.name, self.config_suffix)
         for dirname in self.config_dirs:
             # resolve the default.conf symlink to real path
             path = os.path.realpath(os.path.join(dirname, filename))
