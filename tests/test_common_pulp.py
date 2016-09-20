@@ -26,7 +26,7 @@ mod = mock_module("pulp.client.admin.config")
 
 def read_config(paths, *args, **kwargs):
     """
-    Mock function for pulp.client.admin.config.read_config().
+    Mock function to be injected into pulp.client.admin.config.
     """
     cp = six.moves.configparser.RawConfigParser()
     cp.read(paths[0])
