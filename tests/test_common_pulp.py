@@ -15,6 +15,25 @@ import sys
 DIR = os.path.dirname(__file__)
 sys.path.insert(0, os.path.join(DIR, ".."))
 
+
+# ----------
+# HACK: mock pulp.client.admin.config module to silence failing tests.
+from tests.common import mock_module  # noqa: E402
+import six.moves.configparser  # noqa: E402
+
+mod = mock_module("pulp.client.admin.config")
+
+
+def read_config(paths, *args, **kwargs):
+    cp = six.moves.configparser.RawConfigParser()
+    cp.read(paths[0])
+    return cp._sections
+
+
+mod.read_config = read_config
+# ----------
+
+
 from releng_sop.common_pulp import PulpAdminConfig  # noqa: E402
 
 
