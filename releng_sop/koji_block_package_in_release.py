@@ -1,15 +1,23 @@
 # -*- coding: utf-8 -*-
 
-"""Block packages in a release.
+"""
+Manual Steps
+~~~~~~~~~~~~
 
-Constructs the koji command
+Requirements:
 
-    koji --profile=KOJI_PROFILE block-pkg RELEASE_TAG PACKAGES...
+* **koji** package
+* package with a koji profile (if needed)
 
-KOJI_PROFILE is obtained from the environment settings.
+Inputs:
 
-RELEASE_TAG is the "tag_release" key from the release configuration
-    corresponding to the release id.
+* **profile** - koji instance in which the change will be made
+* **tag** - release (a.k.a. main) koji tag name for a release
+* **package** - name of package to be blocked in a release
+
+Steps:
+
+#. ``koji --profile=<profile> block-pkg <tag> <package> [package] ...``
 """
 
 from __future__ import print_function

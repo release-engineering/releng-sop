@@ -20,6 +20,12 @@
 import os
 import sys
 import sphinx_rtd_theme
+
+# HACK: inject empty koji module to silence failing docs generation.
+# We need to add koji to deps (currently not possible)
+import imp
+sys.modules["koji"] = imp.new_module("koji")
+
 sys.path.insert(0, os.path.abspath('..'))
 
 # -- General configuration ------------------------------------------------
