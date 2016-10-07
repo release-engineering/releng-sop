@@ -152,6 +152,11 @@ def get_parser():
         help="PDC release ID, for example 'fedora-24', 'fedora-24-updates'.",
     )
     parser.add_argument(
+        "owner",
+        metavar="OWNER",
+        help="Package owner.",
+    )
+    parser.add_argument(
         "packages",
         metavar="PACKAGE",
         nargs="+",
@@ -161,12 +166,6 @@ def get_parser():
         "--commit",
         action="store_true",
         help="Program performs a dry-run by default. Enable this option to apply the changes.",
-    )
-    parser.add_argument(
-        "--owner",
-        required=True,
-        default=argparse.SUPPRESS,
-        help="Package owner",
     )
     parser.add_argument(
         "--scl",

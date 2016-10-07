@@ -204,13 +204,13 @@ class TestKojiCreatePackageParser(ParserTestBase, unittest.TestCase):
     ARGUMENTS = {
         'envHelp': {
             'arg': '--env ENV',
-            'env_default': ['--owner=test', 'fedora-24', 'bash'],
-            'env_set': ['--owner=test', 'fedora-24', 'bash', "--env", "some_env"],
+            'env_default': ['fedora-24', 'test', 'bash'],
+            'env_set': ['fedora-24', 'test', 'bash', "--env", "some_env"],
         },
         'commitHelp': {
             'arg': '--commit',
-            'commit_default': ['--owner=test', 'fedora-24', 'bash'],
-            'commit_set': ['--owner=test', 'fedora-24', 'bash', '--commit'],
+            'commit_default': ['fedora-24', 'test', 'bash'],
+            'commit_set': ['fedora-24', 'test', 'bash', '--commit'],
         },
         'helpReleaseId': {
             'arg': 'RELEASE_ID',
@@ -219,7 +219,7 @@ class TestKojiCreatePackageParser(ParserTestBase, unittest.TestCase):
             'arg': 'PACKAGE',
         },
         'helpOwner': {
-            'arg': '--owner',
+            'arg': 'OWNER',
         },
         'helpScl': {
             'arg': '--scl',
