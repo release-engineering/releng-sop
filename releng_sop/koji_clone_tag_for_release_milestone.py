@@ -1,18 +1,22 @@
 # -*- coding: utf-8 -*-
 
+"""
+Manual Steps
+~~~~~~~~~~~~
+Requirements:
 
-"""Clone tag for release milestone.
+* **koji** package
+* package with a koji profile (if needed)
 
-Constructs the koji command
+Inputs:
 
-    koji --profile=<koji_profile> clone-tag --verbose <compose_tag> <milestone_tag>
+* **profile** - koji instance in which the change will be made
+* **compose_tag** - release (a.k.a. main) koji tag name for a release
+* **milestone_tag** - main release tag + name of milestone + milestone major version + "-set" suffix, for example f24-beta-1-set
 
-koji_profile is obtained from the environment settings.
+Steps:
 
-compose_tag is compose koji tag name for a release
-
-milestone_tag is main release tag + name of milestone + milestone major version +
-    '-set' suffix, for example f24-beta-1-set
+#. ``koji --profile=<profile> clone-tag --verbose <compose_tag> <milestone_tag>``
 """
 
 
