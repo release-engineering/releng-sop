@@ -14,8 +14,9 @@ from mock import Mock
 DIR = os.path.dirname(__file__)
 sys.path.insert(0, os.path.join(DIR, ".."))
 
-from releng_sop.common import Environment, Release  # noqa
+from releng_sop.common import Environment, Release, UsageError  # noqa
 from releng_sop.koji_create_package_in_release import get_parser, KojiCreatePackageInRelease  # noqa
+# from releng_sop.koji_create_package_in_release import _handle_scl  # noqa
 from tests.common import ParserTestBase  # noqa
 
 
@@ -28,7 +29,7 @@ class TestKojiCreatePackage(unittest.TestCase):
         'config_data': {
             'koji_profile': 'test'
         },
-        '__getitem__': lambda self, item: self.config_data[item]
+        '__getitem__': lambda self, item: self.config_data[item],
     }
 
     release_spec = {
@@ -39,7 +40,8 @@ class TestKojiCreatePackage(unittest.TestCase):
                 'tag_release': 'test'
             },
         },
-        '__getitem__': lambda self, item: self.config_data[item]
+        '__contains__': lambda self, item: item in self.config_data,
+        '__getitem__': lambda self, item: self.config_data[item],
     }
 
     packages = ['bash']
@@ -101,6 +103,101 @@ class TestKojiCreatePackage(unittest.TestCase):
         self.assertEqual(actual, expected, self.test_get_cmd_with_commit.__doc__)
 
 
+class TestHandleScl(unittest.TestCase):
+    """Test handling of --scl option."""
+
+    def setUp(self):
+        """Set up Release object spec."""
+        self.release_spec = {
+            'config_path': 'testscl.json',
+            'config_data': {
+                'scls': ['python27', 'bash']
+            },
+            '__contains__': lambda self, item: item in self.config_data,
+            '__getitem__': lambda self, item: self.config_data[item]
+        }
+        self.handle_scl = KojiCreatePackageInRelease._handle_scl
+
+    def _get_release_mock(self):
+        release = Mock(spec_set=list(self.release_spec.keys()))
+        release.configure_mock(**self.release_spec)
+        return release
+
+    def test_unexpected_scl(self):
+        """
+        Raise UsageError in case there is no scls data, but scl is specified.
+        """
+        # remove scls data from release
+        self.release_spec['config_data'].pop('scls')
+        release = self._get_release_mock()
+        scl = 'none'
+        packages = list()
+
+        self.assertRaises(UsageError, self.handle_scl, release, scl, packages)
+
+    def test_missing_scl(self):
+        """
+        Raise UsageError in case the is scls data, but scl is not specified.
+        """
+        release = self._get_release_mock()
+        scl = None
+        packages = list()
+
+        self.assertRaises(UsageError, self.handle_scl, release, scl, packages)
+
+    def test_incorrect_scl(self):
+        """
+        Raise UsageError in case scl is not in scls data.
+        """
+        release = self._get_release_mock()
+        scl = 'perl'
+        packages = list()
+
+        self.assertRaises(UsageError, self.handle_scl, release, scl, packages)
+
+    def test_none_scl(self):
+        """
+        Package names are not prefixed when there is scls data and scl is none.
+        """
+        release = self._get_release_mock()
+        scl = 'none'
+        packages_in = ['kernel', 'productmd']
+
+        # work with a copy of packages_in
+        packages_out = self.handle_scl(release, scl, list(packages_in))
+
+        self.assertEqual(packages_in, packages_out, self.test_none_scl.__doc__)
+
+    def test_correct_scl(self):
+        """
+        Package names are prefixed when there is scls data and scl is selected.
+        """
+        release = self._get_release_mock()
+        scl = 'bash'
+        packages_in = ['poke', 'mon']
+
+        # work with a copy of packages_in
+        packages_out = self.handle_scl(release, scl, list(packages_in))
+        packages_expected = ['%s-%s' % (scl, package) for package in packages_in]
+
+        self.assertEqual(packages_expected, packages_out, self.test_correct_scl.__doc__)
+
+    def test_scl_data_empty(self):
+        """
+        'none' can be still selected as scl when scls data is empty.
+        """
+        # set scls data empty
+        self.release_spec['config_data']['scls'] = list()
+        release = self._get_release_mock()
+        scl = 'none'
+        packages_in = ['lindy', 'hop']
+
+        # work with a copy of packages_in
+        packages_out = self.handle_scl(release, scl, list(packages_in))
+
+        self.assertEqual(packages_in, packages_out, self.test_scl_data_empty.__doc__)
+
+
 class TestKojiCreatePackageParser(ParserTestBase, unittest.TestCase):
     """Set Arguments and Parser for Test generator."""
 
@@ -123,6 +220,9 @@ class TestKojiCreatePackageParser(ParserTestBase, unittest.TestCase):
         },
         'helpOwner': {
             'arg': '--owner',
+        },
+        'helpScl': {
+            'arg': '--scl',
         },
     }
 

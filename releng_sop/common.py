@@ -15,6 +15,7 @@ __all__ = (
     "get_logger",
     "Error",
     "ConfigError",
+    "UsageError",
 )
 
 
@@ -26,6 +27,12 @@ class Error(Exception):
 
 class ConfigError(Error):
     """Error to be raised for configuration errors."""
+
+    pass
+
+
+class UsageError(Error):
+    """Error to be raised for usage errors of scripts."""
 
     pass
 
@@ -80,6 +87,9 @@ class ConfigBase(object):
 
     def __getitem__(self, name):
         return self.config_data[name]
+
+    def __contains__(self, name):
+        return name in self.config_data
 
     def __iter__(self):
         for key in self.config_data:
