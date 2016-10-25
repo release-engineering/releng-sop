@@ -20,18 +20,30 @@
 import os
 import sys
 import sphinx_rtd_theme
-
-# HACK: inject empty koji module to silence failing docs generation.
-# HACK: inject empty pulp.client.admin.config module to silence failing docs generation.
-# We need to add koji to deps (currently not possible)
-import imp
-sys.modules["koji"] = imp.new_module("koji")
-sys.modules["pulp"] = imp.new_module("pulp")
-sys.modules["pulp.client"] = imp.new_module("pulp.client")
-sys.modules["pulp.client.admin"] = imp.new_module("pulp.client.admin")
-sys.modules["pulp.client.admin.config"] = imp.new_module("pulp.client.admin.config")
+from mock import Mock as MagicMock
 
 sys.path.insert(0, os.path.abspath('..'))
+
+# -- Mock external dependencies ------------------------------------------
+
+# Don't want documentation for them, and not all of them will be available
+# through pip.
+
+class Mock(MagicMock):
+    @classmethod
+    def __getattr__(cls, name):
+            return Mock()
+
+MOCK_MODULES = [
+    'koji',
+    'pdc_client',
+    'productmd', 'productmd.composeinfo',
+    'pulp', 'pulp.client', 'pulp.client.admin', 'pulp.client.admin.config',
+    'xdg', 'xdg.BaseDirectory',
+]
+
+sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
+
 
 # -- General configuration ------------------------------------------------
 

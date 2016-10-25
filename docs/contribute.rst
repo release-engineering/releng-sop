@@ -32,6 +32,10 @@ Dependencies for *tests* are duplicated in ``tox.ini`` and ``setup.py``
 ``tests_require`` section. This is done to support both ``setup.py test``
 and running the tests within tox, using pytest.
 
+When generating *documentation* external dependencies are mocked in
+``docs/conf.py``, in order to avoid breaking *readthedocs.org*
+due to missing environment dependencies.
+
 Once you have tox, you can run the tests like
 
 ::
