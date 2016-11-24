@@ -27,11 +27,10 @@ import sys
 
 import argparse
 
-from .common import Environment, Release, UsageError, Error
-from .kojibase import KojiBase
+from .common import Environment, Release, UsageError, Error, CommandBase
 
 
-class KojiCreatePackageInRelease(KojiBase):
+class KojiCreatePackageInRelease(CommandBase):
     """
     Create packages in a release.
 
@@ -209,6 +208,7 @@ def main():
         if not args.debug:
             sys.tracebacklimit = 0
         raise
+
 
 if __name__ == "__main__":
     main()

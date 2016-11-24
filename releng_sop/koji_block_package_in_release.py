@@ -26,11 +26,10 @@ import sys
 
 import argparse
 
-from .common import Environment, Release, Error
-from .kojibase import KojiBase
+from .common import Environment, Release, Error, CommandBase
 
 
-class KojiBlockPackageInRelease(KojiBase):
+class KojiBlockPackageInRelease(CommandBase):
     """Block packages in a release.
 
     :param env:        Environment object to be used to execute the commands.

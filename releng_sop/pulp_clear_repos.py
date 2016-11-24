@@ -28,12 +28,11 @@ import subprocess
 from pdc_client import PDCClient
 import argparse
 
-from .common import Environment, Release, Error, UsageError
+from .common import Environment, Release, Error, UsageError, CommandBase
 from .common_pulp import PulpAdminConfig
-from .kojibase import KojiBase
 
 
-class PulpClearRepos(KojiBase):
+class PulpClearRepos(CommandBase):
     """Clear Pulp repos.
 
     :param env:                Environment object to be used to execute the commands.
@@ -265,6 +264,7 @@ def main():
         if not args.debug:
             sys.tracebacklimit = 0
         raise
+
 
 if __name__ == "__main__":
     main()
