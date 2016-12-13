@@ -24,6 +24,7 @@ setup(
         "bin/koji-block-package-in-release",
         "bin/koji-create-package-in-release",
         "bin/koji-clone-tag-for-release-milestone",
+        "bin/koji-sign-rpms-in-release",
         "bin/pulp-clear-repos",
         "bin/pulp-clone-repos",
     ],
