@@ -8,6 +8,11 @@ as simple scripts that take minimal input and perform implemented
 operations consistently across all product releases.
 
 
+Building with Tito
+------------------
+Read [TITO.md](TITO.md) for instructions.
+
+
 In Scope
 --------
 * Features
