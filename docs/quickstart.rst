@@ -4,11 +4,18 @@ Quickstart
 Installation
 ------------
 
+#. Install dependencies not available in PyPI:
+
+    ::
+
+        dnf install redhat-rpm-config python-devel krb5-devel pulp-admin-client
+
+
 #. Clone the git repo, and change to the repo directory:
 
     ::
 
-        git clone git@github.com:release-engineering/releng-sop.git
+        git clone https://github.com/release-engineering/releng-sop.git
         cd releng-sop
 
 
@@ -16,7 +23,7 @@ Installation
 
     ::
 
-        python<version> setup.py install
+        pip<version> install ./
 
 
 Configure environments

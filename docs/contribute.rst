@@ -56,6 +56,13 @@ For generating documentation:
 
     $ tox -e docs
 
+tox will cache the environments in order to speed up test execution.
+Sometimes this can cause issues (when dependencies are changed or added).
+These can be overcome by recreating the tox environments using the ``-r`` flag.
+::
+
+    $ tox -r
+
 
 Pre-commit hook
 ---------------
